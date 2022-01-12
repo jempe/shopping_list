@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"text/template"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -12,6 +13,8 @@ import (
 
 	"github.com/jempe/shopping_list/models/lists"
 )
+
+var indexTemplate *template.Template
 
 func main() {
 	gormDB, dbError := gorm.Open("sqlite3", "shopping_lists.db")
@@ -58,13 +61,30 @@ func main() {
 		},
 	})
 
+	//setup homepage template
+	paths := []string{"tmpl/index.html"}
+	indexTemplate = template.Must(template.ParseFiles(paths...))
+
+	// setup http handlers
 	mux := http.NewServeMux()
 
 	Admin.MountTo("/admin", mux)
 	API.MountTo("/api", mux)
 
+	mux.Handle("/system/", http.FileServer(http.Dir("public")))
+
+	mux.HandleFunc("/", pageHandler)
+
 	port := "3000"
 
 	log.Println("Serve running on port:", port)
 	panic(http.ListenAndServe("127.0.0.1:"+port, mux))
+}
+func pageHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/" {
+		indexTemplate.Execute(w, nil)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Page Not Found"))
+	}
 }
