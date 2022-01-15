@@ -85,7 +85,17 @@ var list = {
 
 		let action_url = "/api/items/" + checkbox.dataset.id + "/" + checkbox_action;
 
-		fetch(action_url, {method : "PUT"});
+		fetch(action_url, {method : "PUT"})
+		.then(function(response){
+			if(window.socket)
+			{
+				console.info("ws send update");
+				window.socket.send("update");
+			}
+		})
+		.catch((error) => {
+			console.error("Error:", error);
+		});
 
 	},
 	handle_route : function() {
