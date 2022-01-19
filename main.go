@@ -187,7 +187,7 @@ func main() {
 	port := "3000"
 
 	log.Println("Serve running on port:", port)
-	panic(http.ListenAndServe("127.0.0.1:"+port, mux))
+	panic(http.ListenAndServe(":"+port, mux))
 }
 func pageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/" {

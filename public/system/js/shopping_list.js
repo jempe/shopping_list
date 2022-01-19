@@ -5,7 +5,7 @@ var list = {
 	init : function() {
 		this.heading = document.querySelector("h1");
 		this.main = document.querySelector("main");
-		this.header = document.querySelector("header");
+		this.header = document.querySelector("header > nav");
 
 		this.handle_route();
 
@@ -49,7 +49,7 @@ var list = {
 	},
 	render_list: function(data) {
 		this.heading.innerText = data.Name;
-		this.header.innerHTML = "<a href=\"#\">Back</a>";
+		this.header.innerHTML = "<a href=\"#\" class=\"back_button\">Back</a>";
 		this.main.innerHTML = "";
 
 		let ul = document.createElement("ul");

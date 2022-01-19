@@ -1,0 +1,82 @@
+body {
+	font-family: 'Roboto', sans-serif;
+	padding:0;
+	margin:0;
+}
+header {
+    background: #333;
+    min-height: 3rem;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    justify-content: space-between;
+
+	a {
+	    text-decoration: none;
+	    font-size: 1.2rem;
+	    color: white;
+
+		&.back_button:before {
+			content: "< ";
+		}
+	}
+
+	a.ws_connect {
+		font-family: 'Material Icons';
+		font-weight: normal;
+		font-style: normal;
+
+		&:before {
+			font-size: 30px;
+		}
+
+		&[data-status='connected']:before {
+			content: "sync";
+		}
+
+		&[data-status='disconnected']:before {
+			content: "sync_problem";
+		}
+	}
+}
+
+h1 {
+    padding: 1rem;
+    margin: 0;
+    font-weight: 400;
+}
+
+main {
+    	padding: 1rem;
+
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style-type: none;
+
+		a, label {
+		    padding: 0.5rem 0;
+		    display: block;
+		    font-size: 2rem;
+		    text-decoration: none;
+		    font-weight: 100;
+		    line-height: 1.2;
+		    color: #000;
+		}
+
+		> li > label {
+		    display: flex;
+		    flex-direction: row;
+		    justify-content: space-between;
+
+			> input {
+			    width: 2rem;
+			    height: 2rem;
+			    border: solid 1px #333;
+			    border-radius: 4px;
+			}
+		}
+	}
+}
+
+
