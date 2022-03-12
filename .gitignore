@@ -15,4 +15,8 @@
 # vendor/
 #
 *.swp
+
+.DS_Store
+
 shopping_lists.db
+config/config.json

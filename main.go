@@ -1,6 +1,10 @@
 package main
 
 import (
+	"crypto/sha256"
+	"crypto/subtle"
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -15,7 +19,14 @@ import (
 	"github.com/jempe/shopping_list/models/lists"
 )
 
+type Configuration struct {
+	Port     string `json:"port"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 var indexTemplate *template.Template
+var config Configuration
 
 type remote struct {
 	forward  chan message
@@ -120,6 +131,11 @@ func (c *client) write() {
 }
 
 func main() {
+	file, err := ioutil.ReadFile("./config/config.json")
+	panicError(err)
+
+	json.Unmarshal(file, &config)
+
 	gormDB, dbError := gorm.Open("sqlite3", "shopping_lists.db")
 
 	if dbError != nil {
@@ -184,16 +200,56 @@ func main() {
 
 	go remote.Run()
 
-	port := "3000"
+	log.Println("Serve running on port:", config.Port)
 
-	log.Println("Serve running on port:", port)
-	panic(http.ListenAndServe(":"+port, mux))
+	// If config file has a username and password, use basic Auth middleware
+	if config.Username != "" && config.Password != "" {
+		panic(http.ListenAndServe(":"+config.Port, basicAuth(mux)))
+	} else {
+		panic(http.ListenAndServe(":"+config.Port, mux))
+	}
 }
+
+func basicAuth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		username, password, ok := r.BasicAuth()
+		if ok {
+			usernameHash := sha256.Sum256([]byte(username))
+			passwordHash := sha256.Sum256([]byte(password))
+			expectedUsernameHash := sha256.Sum256([]byte(config.Username))
+			expectedPasswordHash := sha256.Sum256([]byte(config.Password))
+
+			usernameMatch := (subtle.ConstantTimeCompare(usernameHash[:], expectedUsernameHash[:]) == 1)
+			passwordMatch := (subtle.ConstantTimeCompare(passwordHash[:], expectedPasswordHash[:]) == 1)
+
+			if usernameMatch && passwordMatch {
+				next.ServeHTTP(w, r)
+				return
+			} else {
+				log.Println("login error")
+			}
+		}
+
+		w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+	})
+}
+
 func pageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/" {
 		indexTemplate.Execute(w, nil)
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("Page Not Found"))
+	}
+}
+func logAndExit(message string) {
+	log.Println(message)
+	os.Exit(1)
+}
+func panicError(err error) {
+	if err != nil {
+		logAndExit(err.Error())
 	}
 }
