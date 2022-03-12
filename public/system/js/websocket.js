@@ -17,6 +17,7 @@ function setup_websocket()
 		socket.onopen = function() {
 			console.error("Websocket connection opened");
 			document.querySelector("a.ws_connect").dataset.status = "connected";
+			socket.send("update");
 		}
 		socket.onclose = function() {
 			console.error("Websocket connection has been closed");
