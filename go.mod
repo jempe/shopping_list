@@ -1,6 +1,6 @@
 module github.com/jempe/shopping_list
 
-go 1.23.0
+go 1.25.0
 
 require (
 	github.com/gorilla/websocket v1.4.2
@@ -43,6 +43,6 @@ require (
 	github.com/theplant/htmltestingutils v0.0.0-20190423050759-0e06de7b6967 // indirect
 	github.com/theplant/testingutils v0.0.0-20190603093022-26d8b4d95c61 // indirect
 	github.com/yosssi/gohtml v0.0.0-20201013000340-ee4748c638f4 // indirect
-	golang.org/x/net v0.38.0 // indirect
+	golang.org/x/net v0.55.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
