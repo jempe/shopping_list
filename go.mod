@@ -3,7 +3,7 @@ module github.com/jempe/shopping_list
 go 1.25.0
 
 require (
-	github.com/gorilla/websocket v1.4.2
+	github.com/gorilla/websocket v1.5.3
 	github.com/jinzhu/gorm v1.9.16
 	github.com/qor/admin v0.0.0-20200701030804-02d81a10a8bf
 	github.com/qor/qor v0.0.0-20200715033016-13227382be83
